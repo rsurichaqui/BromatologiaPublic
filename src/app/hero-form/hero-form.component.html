@@ -1,0 +1,122 @@
+<div class="container">
+  <div [hidden]="submitted">
+    <h1>Formulario de Consulta</h1>
+    <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+      <div class="form-group">
+        <label for="name">Número de DNI</label>
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          required
+          [(ngModel)]="model.name"
+          name="name"
+          #name="ngModel"
+        />
+        <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+          ¡Ingrese el número de DNI valido!
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-success"
+        [disabled]="!heroForm.form.valid"
+      >
+        Consulta
+      </button>
+      <!--
+      <div>
+        <hr>
+        DNI = {{showFormControls(heroForm)}}
+      </div>
+      - -->
+    </form>
+  </div>
+  <div [hidden]="!submitted">
+    <div *ngIf="result">
+      <div *ngIf="!result.bitRealizado" class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">¡Error {{ result.strCodigo }}!</h4>
+        <p>{{ result.strMensaje }}</p>
+        <hr />
+        <p class="mb-0">
+          Por favor intente nuevamete. Si el error persiste comuniquese con la
+          Subgerencia de Tecnologías de Información y Comunicación de la
+          Municipalidad Provincial de Huancayo.
+        </p>
+      </div>
+
+      <div *ngIf="result.bitRealizado">
+        <div
+          *ngIf="result.intFilasAfectadas <= 0"
+          class="alert alert-warning"
+          role="alert"
+        >
+          <h4 class="alert-heading">¡Lo sentimos!</h4>
+          <p>{{ result.strMensaje }}</p>
+          <hr />
+          <p class="mb-0">
+            Por favor intente nuevamete. Si esta seguro que la información
+            existe comuniquese con la Subgerencia de Tecnologías de Información
+            y Comunicación de la Municipalidad Provincial de Huancayo.
+          </p>
+        </div>
+
+        <div *ngIf="result.intFilasAfectadas > 0">
+          <h2>Tu consultaste lo siguiente:</h2>
+          <div *ngFor="let persona of result.lisPersona">
+            <div class="row">
+              <div class="col-xs-3">Número de documento de identidad</div>
+              <div class="col-xs-9">{{ persona.strDni }}</div>  
+            </div>
+            <div class="row">
+              <div class="col-xs-3">Apellidos y nombres</div>
+              <div class="col-xs-9">{{ persona.strNombreCompeto }}</div>  
+            </div>
+            <br>
+            <div *ngIf="persona.lisTarjetaSalud.length <= 0" class="alert alert-danger" role="alert">
+              El administrado no cuentra con tarjeta de salud
+            </div>
+            <div *ngFor="let ts of persona.lisTarjetaSalud" >
+              <hr>
+              <div class="row">
+                <div class="col-xs-3">Número</div>
+                <div class="col-xs-9">{{ ts.strNumero }}</div>  
+              </div>
+              <div class="row">
+                <div class="col-xs-3">Fecha inicio</div>
+                <div class="col-xs-9">{{ ts.dtmFechaExpedicion | date:'yyyy-MM-dd' }}</div>  
+              </div>
+              <div class="row">
+                <div class="col-xs-3">Fecha culmina</div>
+                <div class="col-xs-9">{{ ts.dtmFechaVencimiento | date:'yyyy-MM-dd' }}</div>  
+              </div>
+              <div class="row">
+                <div class="col-xs-3">Centro de trabajo</div>
+                <div class="col-xs-9">{{ ts.strDireccionD }}</div>  
+              </div>
+              <div class="row">
+                <div class="col-xs-3">Actividad</div>
+                <div class="col-xs-9">{{ ts.strCentroTrabajo }}</div>  
+              </div>
+              <div class="row">
+                <div class="col-xs-3">Manipulación de alimentos</div>
+                <div class="col-xs-9">{{ ts.strManipulacion }}</div>  
+              </div>
+              <div class="row">
+                <div class="col-xs-3">Número de comprobante de pago</div>
+                <div class="col-xs-9">{{ ts.strNumeroRecibo }}</div>  
+              </div>
+              </div>
+            <hr>
+          </div>
+        </div>
+      </div>
+
+      <br />
+      <button class="btn btn-primary" (click)="submitted = false">
+        Volver
+      </button>
+    </div>
+  </div>
+</div>
